@@ -1,0 +1,19 @@
+{
+  "name": "flex-parse",
+  "version": "1.0.0",
+  "description": "A flexible lexer and parser",
+  "main": "index.js",
+  "author": "Taylor Coons <TaylorCoons8798@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+  },
+  "scripts": {
+    "test": "yarn jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.22",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.4",
+    "typescript": "^4.2.4"
+  }
+}
