@@ -1,6 +1,7 @@
 import { Symbol, SymbolType } from './symbols'
 import { stripStartEnd } from './lexer'
 import { operations, Associativity, Notation } from './operations'
+import { GroupingSentenal } from './groupings'
 
 export function parse(symbols: Symbol[]) {
     return parseRec(symbols, 0)
@@ -11,8 +12,24 @@ const highestPrecedence =  operations.reduce((highest, operation) => {
     return highest < precedence ? precedence : highest
 }, 0)
 
+function stripGrouping(symbols: Symbol[]) {
+    const startSymbol = symbols[0]
+    const endSymbol = symbols[symbols.length - 1]
+    const match = (endSymbol.type === SymbolType.GROUPING 
+        && startSymbol.type === SymbolType.GROUPING
+        && startSymbol.value.type === endSymbol.value.type
+        && startSymbol.value.sentenal === GroupingSentenal.START
+        && endSymbol.value.sentenal === GroupingSentenal.END)
+
+    if (match) {
+        return [...symbols.slice(1, symbols.length - 2)]
+    } else {
+        return symbols
+    }
+}
+
 function parseRec(symbols: Symbol[], precedence: number): number {
-    symbols = stripStartEnd(symbols)
+    symbols = stripGrouping(stripStartEnd(symbols))
     if (symbols.length === 1) {
         if (symbols[0].type === SymbolType.NUMBER) {
             return symbols[0].value
@@ -36,13 +53,6 @@ function parseRec(symbols: Symbol[], precedence: number): number {
                 if (symbol.value.type === op.type) {
                     let lhs = [...symbolSet].splice(0, symbolIndex)
                     let rhs = [...symbolSet].splice(symbolIndex + 1)
-                    if (op.arity === 2 && op.associativity === Associativity.LEFT) {
-                        const temp = lhs
-                        lhs = rhs
-                        rhs = temp
-                        lhs.reverse()
-                        rhs.reverse()
-                    }
                     switch (op.arity) {
                         case 1:
                             switch (op.notation) {
@@ -54,6 +64,13 @@ function parseRec(symbols: Symbol[], precedence: number): number {
                                     throw new Error(`Invalid notation: ${op.notation} for a unary operation: ${op.name}`)
                             }
                         case 2:
+                            if (op.associativity === Associativity.LEFT) {
+                                const temp = lhs
+                                lhs = rhs
+                                rhs = temp
+                                lhs.reverse()
+                                rhs.reverse()
+                            }
                             return op.func(parseRec(lhs, precedence), parseRec(rhs, precedence))
                         default:
                             throw new Error(`Operation: ${op.name} has invalid arity: ${op.arity}`)
