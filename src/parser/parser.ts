@@ -54,9 +54,6 @@ function parseRec(symbols: Symbol[], precedence: number): number {
                                     throw new Error(`Invalid notation: ${op.notation} for a unary operation: ${op.name}`)
                             }
                         case 2:
-                            if (op.notation !== Notation.INFIX) {
-                                throw new Error(`Invalid notation: ${op.notation} for a binary operation: ${op.name}`)
-                            }
                             return op.func(parseRec(lhs, precedence), parseRec(rhs, precedence))
                         default:
                             throw new Error(`Operation: ${op} has invalid arity: ${op.arity}`)

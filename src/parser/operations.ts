@@ -20,7 +20,18 @@ export enum Notation {
     INFIX,
     PREFIX
 }
-export interface Operation {
+export type Operation = UnaryOperation | BinaryOperation
+export interface UnaryOperation {
+    name: string;
+    type: OperationType;
+    syntax: string;
+    previousSymbols?: Symbol[];
+    precedence: number;
+    arity: 1;
+    notation: Notation;
+    func: (...args: number[]) => number;
+}
+export interface BinaryOperation {
     name: string;
     type: OperationType;
     syntax: string;
@@ -28,9 +39,10 @@ export interface Operation {
     precedence: number;
     arity: number;
     associativity: Associativity;
-    notation: Notation;
+    notation: Notation.INFIX;
     func: (...args: number[]) => number;
 }
+
 export const operations: Operation[] = [
     {
         name: 'add',
@@ -70,7 +82,6 @@ export const operations: Operation[] = [
         syntax: '-',
         precedence: 0,
         arity: 1,
-        associativity: Associativity.LEFT,
         notation: Notation.PREFIX,
         func: (x) => -x
     },
@@ -110,7 +121,6 @@ export const operations: Operation[] = [
         syntax: '!',
         precedence: 3,
         arity: 1,
-        associativity: Associativity.LEFT,
         notation: Notation.POSTFIX,
         func: function exp(x): number {
             if (x < 0) {

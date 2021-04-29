@@ -1,4 +1,7 @@
 // jest.config.js
 module.exports = {
-    preset: 'ts-jest'
+    preset: 'ts-jest',
+    testMatch: [
+        "**/test/**/*.ts"
+    ]
 };
