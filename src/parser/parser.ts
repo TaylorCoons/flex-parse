@@ -57,12 +57,8 @@ function skipGrouping(startIndex: number, symbols: Symbol[], reversed: boolean):
 
 function parseRec(symbols: Symbol[], precedence: number): number {
     symbols = stripStartEnd(symbols)
-    console.log('Starting Symbols: ')
-    console.log(symbols)
     if (groupMatch(symbols[0], symbols[symbols.length - 1])) {
         symbols = stripGrouping(symbols)
-        console.log('Grouping detected: ')
-        console.log(symbols)
         precedence = 0
     }
     if (symbols.length === 1) {
