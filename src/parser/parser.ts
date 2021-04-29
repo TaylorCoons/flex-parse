@@ -20,7 +20,7 @@ function parseRec(symbols: Symbol[], precedence: number): number {
         throw new Error(`Unexpected symbol: ${symbols[0]}`)
     }
     if (precedence > highestPrecedence) {
-        throw new Error(`Unmatched operators: ${symbols}`)
+        throw new Error(`Unmatched symbols: ${symbols}`)
     }
     const ops = operations.filter((op) => {
         return op.precedence === precedence
@@ -56,7 +56,7 @@ function parseRec(symbols: Symbol[], precedence: number): number {
                         case 2:
                             return op.func(parseRec(lhs, precedence), parseRec(rhs, precedence))
                         default:
-                            throw new Error(`Operation: ${op} has invalid arity: ${op.arity}`)
+                            throw new Error(`Operation: ${op.name} has invalid arity: ${op.arity}`)
                     }
                 }
             }
