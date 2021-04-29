@@ -1,5 +1,6 @@
 import { parse } from '../src/parser/parser'
 import { lex } from '../src/parser/lexer'
+
 describe('Parser tests', () => {
     test('Basic test with precedence 0', () => {
         expect(parse(lex('1+2'))).toBe(3)
@@ -47,7 +48,20 @@ describe('Parser tests', () => {
 })
 
 describe('Grouping tests', () => {
-    test.only('Basic grouping', () => {
+    test('Basic grouping', () => {
         expect(parse(lex('(1)'))).toBe(1)
+        expect(parse(lex('(1+1)'))).toBe(2)
+    })
+    test('Basic grouping with order', () => {
+        expect(parse(lex('2*(1+1)'))).toBe(4)
+    })
+    test('Nested groupings', () => {
+        expect(parse(lex('2*(2^(2+1))'))).toBe(16)
+    })
+    test('Prefix unary with group', () => {
+        expect(parse(lex('-(3+1)'))).toBe(-4)
+    })
+    test('Postfix unary with group', () => {
+        expect(parse(lex('(5-1)!'))).toBe(24)
     })
 })

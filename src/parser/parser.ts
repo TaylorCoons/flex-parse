@@ -1,4 +1,4 @@
-import { Symbol, SymbolType } from './symbols'
+import { GroupingSymbol, Symbol, SymbolType } from './symbols'
 import { stripStartEnd } from './lexer'
 import { operations, Associativity, Notation } from './operations'
 import { GroupingSentenal } from './groupings'
@@ -12,15 +12,18 @@ const highestPrecedence =  operations.reduce((highest, operation) => {
     return highest < precedence ? precedence : highest
 }, 0)
 
-function stripGrouping(symbols: Symbol[]) {
-    const startSymbol = symbols[0]
-    const endSymbol = symbols[symbols.length - 1]
-    const match = (endSymbol.type === SymbolType.GROUPING 
+function groupMatch(startSymbol: Symbol, endSymbol: Symbol): boolean {
+    return (endSymbol.type === SymbolType.GROUPING 
         && startSymbol.type === SymbolType.GROUPING
         && startSymbol.value.type === endSymbol.value.type
         && startSymbol.value.sentenal === GroupingSentenal.START
         && endSymbol.value.sentenal === GroupingSentenal.END)
+}
 
+function stripGrouping(symbols: Symbol[]) {
+    const startSymbol = symbols[0]
+    const endSymbol = symbols[symbols.length - 1]
+    const match = groupMatch(startSymbol, endSymbol)
     if (match) {
         return [...symbols.slice(1, symbols.length - 1)]
     } else {
@@ -28,8 +31,40 @@ function stripGrouping(symbols: Symbol[]) {
     }
 }
 
+function skipGrouping(startIndex: number, symbols: Symbol[], reversed: boolean): number {
+    const startSymbol = symbols[startIndex]
+    let groupingStack: GroupingSymbol[] = []
+    const startSentenal: GroupingSentenal = reversed ? GroupingSentenal.END : GroupingSentenal.START
+    const endSentenal: GroupingSentenal = reversed ? GroupingSentenal.START : GroupingSentenal.END
+    if (startSymbol.type === SymbolType.GROUPING && startSymbol.value.sentenal === startSentenal) {
+        for (let index = startIndex + 1; index < symbols.length; index++) {
+            const currSymbol = symbols[index] 
+            if (currSymbol.type === SymbolType.GROUPING && currSymbol.value.type === startSymbol.value.type) {
+                if (currSymbol.value.sentenal === startSentenal) {
+                    groupingStack.push(currSymbol)
+                } else if (currSymbol.value.sentenal === endSentenal) {
+                    if (groupingStack.length) {
+                        groupingStack.pop()
+                    } else {
+                        return index
+                    }
+                }
+            } 
+        }
+    }
+    return startIndex
+}
+
 function parseRec(symbols: Symbol[], precedence: number): number {
-    symbols = stripGrouping(stripStartEnd(symbols))
+    symbols = stripStartEnd(symbols)
+    console.log('Starting Symbols: ')
+    console.log(symbols)
+    if (groupMatch(symbols[0], symbols[symbols.length - 1])) {
+        symbols = stripGrouping(symbols)
+        console.log('Grouping detected: ')
+        console.log(symbols)
+        precedence = 0
+    }
     if (symbols.length === 1) {
         if (symbols[0].type === SymbolType.NUMBER) {
             return symbols[0].value
@@ -44,10 +79,13 @@ function parseRec(symbols: Symbol[], precedence: number): number {
     })
     for (const op of ops) {
         let symbolSet = [...symbols]
+        let reversed: boolean = false
         if (op.arity === 2 && op.associativity === Associativity.LEFT) {
             symbolSet.reverse()
+            reversed = true
         }
         for (let symbolIndex = 0; symbolIndex < symbolSet.length; symbolIndex++) {
+            symbolIndex = skipGrouping(symbolIndex, symbolSet, reversed)
             const symbol = symbolSet[symbolIndex]
             if (symbol.type === SymbolType.OPERATION) {
                 if (symbol.value.type === op.type) {
