@@ -22,7 +22,7 @@ function stripGrouping(symbols: Symbol[]) {
         && endSymbol.value.sentenal === GroupingSentenal.END)
 
     if (match) {
-        return [...symbols.slice(1, symbols.length - 2)]
+        return [...symbols.slice(1, symbols.length - 1)]
     } else {
         return symbols
     }

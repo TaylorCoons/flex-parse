@@ -45,3 +45,9 @@ describe('Parser tests', () => {
         expect(parse(lex('7-8-8+7*2/7-0+1+-3'))).toBe(-9)
     })
 })
+
+describe('Grouping tests', () => {
+    test.only('Basic grouping', () => {
+        expect(parse(lex('(1)'))).toBe(1)
+    })
+})
