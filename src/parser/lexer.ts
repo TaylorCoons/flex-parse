@@ -1,6 +1,6 @@
 import { Operation, operations } from './operations'
 import { SymbolType, Symbol } from './symbols'
-import { GroupingType, groupings } from './groupings'
+import { GroupingSentenal, groupings } from './groupings'
 
 export function stripStartEnd(symbols: Symbol[]): Symbol[] {
     return symbols.filter((symbol) => {
@@ -80,7 +80,7 @@ function lexGrouping(content: string): Symbol | undefined {
                 type: SymbolType.GROUPING,
                 value: {
                     ...grouping,
-                    type: GroupingType.START
+                    sentenal: GroupingSentenal.START
                 },
                 length: grouping.startSyntax.length
             }
@@ -90,7 +90,7 @@ function lexGrouping(content: string): Symbol | undefined {
                 type: SymbolType.GROUPING,
                 value: {
                     ...grouping,
-                    type: GroupingType.END
+                    sentenal: GroupingSentenal.END
                 },
                 length: grouping.endSyntax.length
             }

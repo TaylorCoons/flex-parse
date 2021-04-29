@@ -1,7 +1,7 @@
 import { lex, stripStartEnd } from '../src/parser/lexer'
 import { Symbol, SymbolType } from '../src/parser/symbols'
 import { operations, OperationType, Operation } from '../src/parser/operations'
-import { GroupingType } from '../src/parser/groupings'
+import { groupings, GroupingSentenal, GroupingType, Grouping } from '../src/parser/groupings'
 
 function wrapStartEnd(symbols: Symbol[]): Symbol[] {
     return [
@@ -52,6 +52,14 @@ describe('Lex tests', () => {
     const negateOp = operations.find(op => op.type === OperationType.NEGATE) as Operation
     const multiplyOp = operations.find(op => op.type === OperationType.MULTIPLY) as Operation
     const divideOp = operations.find(op => op.type === OperationType.DIVIDE) as Operation
+    const parenStart: Grouping = {
+        ...(groupings.find(grouping => grouping.type === GroupingType.Parenthesis) as Grouping),
+        sentenal: GroupingSentenal.START
+    }
+    const parenEnd: Grouping = {
+        ...(groupings.find(grouping => grouping.type === GroupingType.Parenthesis) as Grouping),
+        sentenal: GroupingSentenal.END
+    }
     test('single ops', () => {
         expect(lex('+')[1]).toStrictEqual({
             type: SymbolType.OPERATION,
@@ -195,20 +203,12 @@ describe('Lex tests', () => {
         expect(lex('()')).toStrictEqual(wrapStartEnd([
             {
                 type: SymbolType.GROUPING,
-                value: {
-                    startSyntax: '(',
-                    endSyntax: ')',
-                    type: GroupingType.START
-                },
+                value: parenStart,
                 length: 1
             },
             {
                 type: SymbolType.GROUPING,
-                value: {
-                    startSyntax: '(',
-                    endSyntax: ')',
-                    type: GroupingType.END
-                },
+                value: parenEnd,
                 length: 1
             },
         ]))
@@ -217,11 +217,7 @@ describe('Lex tests', () => {
         expect(lex('(4--5)--(6*-5)')).toStrictEqual(wrapStartEnd([
             {
                 type: SymbolType.GROUPING,
-                value: {
-                    startSyntax: '(',
-                    endSyntax: ')',
-                    type: GroupingType.START
-                },
+                value: parenStart,
                 length: 1
             },
             {
@@ -246,11 +242,7 @@ describe('Lex tests', () => {
             },
             {
                 type: SymbolType.GROUPING,
-                value: {
-                    startSyntax: '(',
-                    endSyntax: ')',
-                    type: GroupingType.END
-                },
+                value: parenEnd,
                 length: 1
             },
             {
@@ -265,11 +257,7 @@ describe('Lex tests', () => {
             },
             {
                 type: SymbolType.GROUPING,
-                value: {
-                    startSyntax: '(',
-                    endSyntax: ')',
-                    type: GroupingType.START
-                },
+                value: parenStart,
                 length: 1
             },
             {
@@ -294,11 +282,7 @@ describe('Lex tests', () => {
             },
             {
                 type: SymbolType.GROUPING,
-                value: {
-                    startSyntax: '(',
-                    endSyntax: ')',
-                    type: GroupingType.END
-                },
+                value: parenEnd,
                 length: 1
             }
         ]))
