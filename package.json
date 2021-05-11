@@ -8,7 +8,8 @@
   "dependencies": {
   },
   "scripts": {
-    "test": "yarn jest"
+    "test": "yarn jest",
+    "build": "yarn tsc"
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
