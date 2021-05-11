@@ -2,7 +2,7 @@
   "name": "flex-parse",
   "version": "1.0.0",
   "description": "A flexible lexer and parser",
-  "main": "index.js",
+  "main": "build/index.js",
   "author": "Taylor Coons <TaylorCoons8798@gmail.com>",
   "license": "MIT",
   "dependencies": {
