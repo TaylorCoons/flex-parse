@@ -8,4 +8,4 @@ export const lexer = _lexer
 export const parser = _parser
 export const symbols = _symbols
 export const operations = _operations
-export const groupins = _groupings
+export const groupings = _groupings
