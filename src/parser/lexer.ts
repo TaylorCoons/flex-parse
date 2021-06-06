@@ -46,7 +46,6 @@ function checkPreviousSymbols(previousSymbol: Symbol, previousMatches: SymbolMat
     }
     return valid
 }
-
 function lexOperation(content: string, symbols: Symbol[]): Symbol | undefined {
     for (const operation of operations) {
         const engine = new RegExp(`^\\${operation.syntax}`)
@@ -67,7 +66,7 @@ function lexNumber(content: string): Symbol | undefined {
     }
     const value = parseInt(res, 10)
     if (value === NaN) {
-        throw new Error(`Could not convert value: ${value} to number`)
+        throw new Error(`Could not convert value: ${res} to number`)
     }
     return {
         type: SymbolType.NUMBER,

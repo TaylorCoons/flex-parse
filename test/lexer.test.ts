@@ -310,4 +310,7 @@ describe('Lex tests', () => {
             }
         ]))
     })
+    test('Error Cases', () => {
+        expect(() => {lex('2%5')}).toThrowError('Unexpected syntax found at: %5')
+    })
 })
