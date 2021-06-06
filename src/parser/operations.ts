@@ -1,5 +1,5 @@
-import { Symbol, SymbolType } from './symbols'
-import { groupings } from './groupings'
+import { SymbolMatch, SymbolType } from './symbols'
+import { groupings, GroupingSentenal, GroupingType } from './groupings'
 
 export enum OperationType {
     MULTIPLY,
@@ -25,7 +25,7 @@ export interface UnaryOperation {
     name: string;
     type: OperationType;
     syntax: string;
-    previousSymbols?: Symbol[];
+    previousSymbols?: SymbolMatch[];
     precedence: number;
     arity: 1;
     notation: Notation;
@@ -35,7 +35,7 @@ export interface BinaryOperation {
     name: string;
     type: OperationType;
     syntax: string;
-    previousSymbols?: Symbol[];
+    previousSymbols?: SymbolMatch[];
     precedence: number;
     arity: number;
     associativity: Associativity;
@@ -61,13 +61,15 @@ export const operations: Operation[] = [
         previousSymbols: [
             {
                 type: SymbolType.NUMBER,
-                value: 0,
-                length: 0
             },
             {
                 type: SymbolType.GROUPING,
-                value: groupings[0],
-                length: 0
+                groupingType: GroupingType.Parenthesis,
+                groupingSentinal: GroupingSentenal.END
+            },
+            {
+                type: SymbolType.OPERATION,
+                operationType: OperationType.FACTORIAL
             }
         ],
         precedence: 0,

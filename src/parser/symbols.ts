@@ -1,5 +1,5 @@
-import { Operation } from './operations'
-import { Grouping } from './groupings'
+import { Operation, OperationType } from './operations'
+import { Grouping, GroupingSentenal, GroupingType } from './groupings'
 
 export enum SymbolType {
     START,
@@ -39,4 +39,29 @@ export interface EndSymbol {
     type: SymbolType.END;
     value: undefined;
     length: 0;
+}
+
+export type SymbolMatch = OperationSymbolMatch | NumberSymbolMatch | GroupingSymbolMatch | StartSymbolMatch | EndSymbolMatch
+
+export interface OperationSymbolMatch {
+    type: SymbolType.OPERATION,
+    operationType: OperationType
+}
+
+export interface NumberSymbolMatch {
+    type: SymbolType.NUMBER
+}
+
+export interface GroupingSymbolMatch {
+    type: SymbolType.GROUPING,
+    groupingType: GroupingType,
+    groupingSentinal: GroupingSentenal
+}
+
+export interface StartSymbolMatch {
+    type: SymbolType.START
+}
+
+export interface EndSymbolMatch {
+    type: SymbolType.END
 }

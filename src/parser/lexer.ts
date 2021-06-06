@@ -1,6 +1,6 @@
 import { Operation, operations } from './operations'
-import { SymbolType, Symbol } from './symbols'
-import { GroupingSentenal, groupings } from './groupings'
+import { SymbolType, Symbol, SymbolMatch } from './symbols'
+import { GroupingSentenal, Grouping, groupings } from './groupings'
 
 export function stripStartEnd(symbols: Symbol[]): Symbol[] {
     return symbols.filter((symbol) => {
@@ -19,19 +19,23 @@ export function validate(content: string): boolean {
     return new RegExp(`[^0-9${opString}]`, 'g').test(content)
 }
 
-function checkPreviousSymbols(symbols: Symbol[], previousMatches: Symbol[] | undefined) {
+function checkPreviousSymbols(previousSymbol: Symbol, previousMatches: SymbolMatch[] | undefined) {
     if (previousMatches === undefined) {
         return true
     }
-    const previousSymbol = symbols[symbols.length - 1]
     let valid = false
     for (const previousMatch of previousMatches) {
         if (previousSymbol.type === previousMatch.type) {
             switch (previousMatch.type) {
                 case SymbolType.OPERATION:
-                    const matchOperation = previousMatch.value as Operation
                     const symbolOperation = previousSymbol.value as Operation
-                    if (matchOperation.type === symbolOperation.type) {
+                    if (previousMatch.operationType === symbolOperation.type) {
+                        valid = true
+                    }
+                break;
+                case SymbolType.GROUPING:
+                    const symbolGrouping = previousSymbol.value as Grouping
+                    if (previousMatch.groupingType === symbolGrouping.type && previousMatch.groupingSentinal === symbolGrouping.sentenal) {
                         valid = true
                     }
                 break;
@@ -46,7 +50,7 @@ function checkPreviousSymbols(symbols: Symbol[], previousMatches: Symbol[] | und
 function lexOperation(content: string, symbols: Symbol[]): Symbol | undefined {
     for (const operation of operations) {
         const engine = new RegExp(`^\\${operation.syntax}`)
-        if (content.match(engine) && checkPreviousSymbols(symbols, operation.previousSymbols)) {
+        if (content.match(engine) && checkPreviousSymbols(symbols[symbols.length - 1], operation.previousSymbols)) {
             return {
                 type: SymbolType.OPERATION,
                 value: operation,

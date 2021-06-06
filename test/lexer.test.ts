@@ -52,6 +52,7 @@ describe('Lex tests', () => {
     const negateOp = operations.find(op => op.type === OperationType.NEGATE) as Operation
     const multiplyOp = operations.find(op => op.type === OperationType.MULTIPLY) as Operation
     const divideOp = operations.find(op => op.type === OperationType.DIVIDE) as Operation
+    const factorialOp = operations.find(op => op.type === OperationType.FACTORIAL) as Operation
     const parenStart: Grouping = {
         ...(groupings.find(grouping => grouping.type === GroupingType.Parenthesis) as Grouping),
         sentenal: GroupingSentenal.START
@@ -195,6 +196,28 @@ describe('Lex tests', () => {
             {
                 type: SymbolType.NUMBER,
                 value: 9,
+                length: 1
+            }
+        ]))
+        expect(lex('3!-2')).toStrictEqual(wrapStartEnd([
+            {
+                type: SymbolType.NUMBER,
+                value: 3,
+                length: 1
+            },
+            {
+                type: SymbolType.OPERATION,
+                value: factorialOp,
+                length: 1
+            },
+            {
+                type: SymbolType.OPERATION,
+                value: subtractOp,
+                length: 1
+            },
+            {
+                type: SymbolType.NUMBER,
+                value: 2,
                 length: 1
             }
         ]))
