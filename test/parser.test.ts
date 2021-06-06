@@ -64,4 +64,7 @@ describe('Grouping tests', () => {
     test('Postfix unary with group', () => {
         expect(parse(lex('(5-1)!'))).toBe(24)
     })
+    test('Subtraction with factorial', () => {
+        expect(parse(lex('3!-2'))).toBe(4)
+    })
 })
