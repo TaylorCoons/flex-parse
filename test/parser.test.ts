@@ -68,3 +68,15 @@ describe('Grouping tests', () => {
         expect(parse(lex('3!-2'))).toBe(4)
     })
 })
+describe('Error tests', () => {
+    test('Unfinished operation', () => {
+        // TODO: Fix this and handle the error gracefully
+        // parse(lex('3*'))
+        // parse(lex('!'))
+        // parse(lex('-'))
+    })
+    test('Unfinished groupings', () => {
+        // parse(lex('('))
+        // parse(lex(')'))
+    })
+})
